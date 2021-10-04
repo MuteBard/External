@@ -3,9 +3,12 @@ const { mkdir, move, writeFile } = require('./PromisifedFunctions');
 const params = require('./ManageArgs').getParams();
 const path = require('path');
 
-const baseDirectory = setBaseDirectory(projectName, destination);
+CreateDirectories(params.projectName, params.destination);
 
-CreateUnityProject(projectName, baseDirectory);
+async function CreateDirectories(projectName, destination){
+    const baseDirectory = setBaseDirectory(projectName, destination);
+    await CreateUnityProject(projectName, baseDirectory);
+}
 
 async function CreateUnityProject(projectName, baseDirectory){
     //folders

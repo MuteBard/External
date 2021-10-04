@@ -1,81 +1,11 @@
 //bring in fs
-const fs = require('fs-extra');
-const args = {
-    name: {
-        command: process.argv.slice(2)[0],
-        data: process.argv.slice(2)[1]
-    },
-    destination: {
-        command: process.argv.slice(2)[2],
-        data: process.argv.slice(2)[3]
-    }
-}
-
-//Establish paths
+const { mkdir, move, writeFile } = require('./PromisifedFunctions');
+const params = require('./ManageArgs').getParams();
 const path = require('path');
 
-//promisify
-const mkdir = (name, options = { recursive: true }) => {
-    return new Promise((resolve, reject) => {
-        fs.mkdir(name, options, (err) => {
-            if(err) reject(err);
-            else {
-                console.log(`Created new directory ${name}`);
-                resolve();
-            }
-        })
-    })
-}
+const baseDirectory = setBaseDirectory(projectName, destination);
 
-const move = (name, destination, options = { overwrite: false }) => {
-    return new Promise((resolve, reject) => {
-        fs.move(name, destination, options, (err) => {
-            if(err) reject(err);
-            else{
-                console.log(`Moved directory at ${destination}`);
-                resolve();
-            } 
-        })
-    })
-}
-
-const writeFile = (name, content = '') => {
-    return new Promise((resolve, reject) => {
-        fs.writeFile(name, content, (err) => {
-            if (err) reject(err);
-            else{
-                console.log(`Created ${name}`);
-                resolve();
-            }
-        })
-    })
-}
-
-async function makeDirectory(base, dir, subdir = []){
-    const destination = path.join(...base, dir, ...subdir);
-    await mkdir(dir);
-    await move(dir, destination);
-}
-
-async function makeFile(base, file, content){
-    const destination = path.join(...base, file);
-    await writeFile(file, content);
-    await move(file, destination);
-}
-
-function setBaseDirectory(projectName, _baseDirectory){
-    let baseDirectory;
-    if(!_baseDirectory){
-        baseDirectory = ['..', projectName.toLowerCase()];
-    }else{
-        baseDirectory = [_baseDirectory, projectName.toLowerCase()];
-    }
-    return baseDirectory;
-}
-
-async function createBranchingDirectory(projectName, baseDirectory){
-    await CreateUnityProject(projectName, baseDirectory);
-}
+CreateUnityProject(projectName, baseDirectory);
 
 async function CreateUnityProject(projectName, baseDirectory){
     //folders
@@ -96,22 +26,33 @@ async function CreateUnityProject(projectName, baseDirectory){
     })
 }
 
-async function ProcessArguments(args){
-    if(args.name.command === '-name' || args.name.command === '-n'){
-        const projectName = args.name.data;
-        if(args.destination.command === '-dest' || args.destination.command === '-d'){
-            const baseDirectory = setBaseDirectory(projectName, args.destination.data);
-            createBranchingDirectory(projectName, baseDirectory);
-        }else{
-            const baseDirectory = setBaseDirectory(projectName);
-            createBranchingDirectory(projectName, baseDirectory);
-        }
-        
+function setBaseDirectory(projectName, _baseDirectory){
+    let baseDirectory;
+    if(!_baseDirectory){
+        baseDirectory = ['..', projectName.toLowerCase()];
     }else{
-        console.log("Valid Project Name not provided", args);
+        baseDirectory = [_baseDirectory, projectName.toLowerCase()];
     }
+    return baseDirectory;
+}
+
+async function makeDirectory(base, dir, subdir = []){
+    const destination = path.join(...base, dir, ...subdir);
+    await mkdir(dir);
+    await move(dir, destination);
+}
+
+async function makeFile(base, file, content){
+    const destination = path.join(...base, file);
+    await writeFile(file, content);
+    await move(file, destination);
 }
 
 
-ProcessArguments(args)
+
+
+
+
+
+
 

@@ -4,7 +4,7 @@ function getArgs(){
             command: process.argv.slice(2)[0],
             data: process.argv.slice(2)[1]
         },
-        destination: {
+        options: {
             command: process.argv.slice(2)[2],
             data: process.argv.slice(2)[3]
         }
@@ -15,10 +15,12 @@ function getArgs(){
 
 function getParams(){
     const args = getArgs();
-    if(args.name.command === '-name' || args.name.command === '-n'){
+    if(args.name.command === '-name'){
         const projectName = args.name.data;
-        if(args.destination.command === '-dest' || args.destination.command === '-d'){
-            return { projectName, destination: args.destination.data };
+        if(args.options.command === '-dest'){
+            return { projectName, destination: args.options.data };
+        }else if(args.options.command === '-trim'){
+            return { projectName, action: 'trim' };   
         }else{
             return { projectName, destination: undefined };
         }

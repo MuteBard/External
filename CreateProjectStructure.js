@@ -1,13 +1,16 @@
-//bring in fs
-const { mkdir, move, writeFile } = require('./PromisifedFunctions');
+const { mkdir, move, writeFile, readFile, deleteFile, listFiles } = require('./PromisifedFunctions');
 const params = require('./ManageArgs').getParams();
 const path = require('path');
 
-CreateDirectories(params.projectName, params.destination);
+ManageDirectories(params);
 
-async function CreateDirectories(projectName, destination){
-    const baseDirectory = setBaseDirectory(projectName, destination);
-    await CreateUnityProject(projectName, baseDirectory);
+async function ManageDirectories(params){
+    const baseDirectory = setBaseDirectory(params.projectName, params.destination);
+    if(params.action === 'trim'){
+        await DeleteUnusedMarkdowns(baseDirectory);
+    }else{
+        await CreateUnityProject(params.projectName, baseDirectory);
+    }
 }
 
 async function CreateUnityProject(projectName, baseDirectory){
@@ -26,7 +29,15 @@ async function CreateUnityProject(projectName, baseDirectory){
         const devText = `# DEV-${paddedNumber},\n#### Tags: []`;
         const updatedBaseDirectory = baseDirectory.concat(['Notes', 'dev'])
         await makeFile(updatedBaseDirectory, `DEV-${paddedNumber}.md`, devText);
-    })
+    });
+}
+
+async function DeleteUnusedMarkdowns(baseDirectory){
+    const updatedBaseDirectory = baseDirectory.concat(['Notes', 'dev'])
+    const fileList = await getFilesFromDir(updatedBaseDirectory);
+    fileList.map(async (fileName) => {
+        await removeFile(updatedBaseDirectory, fileName);
+    });
 }
 
 function setBaseDirectory(projectName, _baseDirectory){
@@ -50,6 +61,23 @@ async function makeFile(base, file, content){
     await writeFile(file, content);
     await move(file, destination);
 }
+
+async function removeFile(base, file){
+    const destination = path.join(...base,  file);
+    const data = await readFile(destination);
+    if (data.includes('#### Tags: []')){
+        return deleteFile(destination);
+    }
+}
+
+async function getFilesFromDir(base){
+    const destination = path.join(...base);
+    return listFiles(destination);
+}
+
+
+
+
 
 
 

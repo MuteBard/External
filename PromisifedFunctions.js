@@ -33,3 +33,48 @@ exports.writeFile = (name, content = '') => {
         })
     })
 }
+
+exports.readFile = (name) => {
+    return new Promise((resolve, reject) => {
+        fs.readFile(name, 'utf8', (err, data) => {
+            if (err){
+                console.log(`File ${name} does not exist`);
+                reject(err);
+            } 
+            else{
+                console.log(`Accessed ${name}`);
+                resolve(data);
+            }
+        })
+    })
+}
+
+exports.deleteFile = (name) => {
+    return new Promise((resolve, reject) => {
+        fs.remove(name, (err) => {
+            if (err){
+                console.log(`File ${name} does not exist`);
+                reject(err);
+            } 
+            else{
+                console.log(`Deleted ${name}`);
+                resolve();
+            }
+        })
+    })
+}
+
+exports.listFiles = (name) => {
+    return new Promise((resolve, reject) => {
+        fs.readdir(name, (err, data) => {
+            if (err){
+                console.log(`No files in ${name}`);
+                reject(err);
+            } 
+            else{
+                console.log(`Retrived file names from ${name}`);
+                resolve(data);
+            }
+        })
+    }) 
+}

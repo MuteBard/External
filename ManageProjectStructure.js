@@ -6,17 +6,19 @@ ManageDirectories(params);
 
 async function ManageDirectories(params){
     const baseDirectory = setBaseDirectory(params.projectName, params.destination);
-    if(params.action === 'trim'){
-        await DeleteUnusedMarkdowns(baseDirectory);
-    }else{
-        await CreateUnityProject(params.projectName, baseDirectory);
+    switch(params.action) {
+        case 'trim':
+            await DeleteUnusedMarkdowns(baseDirectory);
+            break;
+        default:
+            await CreateUnityProject(params.projectName, baseDirectory);
+            break;
     }
 }
 
 async function CreateUnityProject(projectName, baseDirectory){
     //folders
     await makeDirectory(baseDirectory, 'Exports');
-    await makeDirectory(baseDirectory, projectName);
     await makeDirectory(baseDirectory, 'Notes', ['dev']);
     await makeDirectory(baseDirectory, 'Notes', ['images']);
 

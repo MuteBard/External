@@ -18,11 +18,13 @@ function getParams(){
     if(args.name.command === '-name'){
         const projectName = args.name.data;
         if(args.options.command === '-dest'){
-            return { projectName, destination: args.options.data };
+            return { projectName, action: 'dest', data: args.options.data };
         }else if(args.options.command === '-trim'){
-            return { projectName, action: 'trim' };   
+            return { projectName, action: 'trim' };
+        }else if(args.options.command === '-pad'){
+            return { projectName, action: 'pad', data: +args.options.data };     
         }else{
-            return { projectName, destination: undefined };
+            return { projectName };
         }
     }else{
         console.log("Valid Project Name not provided", args);

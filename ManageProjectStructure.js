@@ -5,18 +5,21 @@ const path = require('path');
 ManageDirectories(params);
 
 async function ManageDirectories(params){
-    const baseDirectory = setBaseDirectory(params.projectName, params.destination);
+    const baseDirectory = setBaseDirectory(params.baseDirectory, params.projectName);
     switch(params.action) {
         case 'trim':
             await DeleteUnusedMarkdowns(baseDirectory);
             break;
+        case 'pad':
+            await WriteAdditionalMarkdowns(baseDirectory, params.data);
+            break;
         default:
-            await CreateUnityProject(params.projectName, baseDirectory);
+            await CreateUnityProject(baseDirectory, params.projectName);
             break;
     }
 }
 
-async function CreateUnityProject(projectName, baseDirectory){
+async function CreateUnityProject(baseDirectory, projectName){
     //folders
     await makeDirectory(baseDirectory, 'Exports');
     await makeDirectory(baseDirectory, 'Notes', ['dev']);
@@ -42,12 +45,26 @@ async function DeleteUnusedMarkdowns(baseDirectory){
     });
 }
 
-function setBaseDirectory(projectName, _baseDirectory){
+async function WriteAdditionalMarkdowns(baseDirectory, amount){
+    const updatedBaseDirectory = baseDirectory.concat(['Notes', 'dev'])
+    const fileList = await getFilesFromDir(updatedBaseDirectory);
+    if(fileList){
+        const offset = fileList.length;
+        [...Array(amount).keys()].map(async (key) => {
+            const updatedKey = offset + key;
+            const paddedNumber = (updatedKey+1).toString().padStart(2, '0');
+            const devText = `# DEV-${paddedNumber},\n#### Tags: []`;
+            await makeFile(updatedBaseDirectory, `DEV-${paddedNumber}.md`, devText);
+        });
+    }
+}
+
+function setBaseDirectory(_baseDirectory, projectName){
     let baseDirectory;
-    if(!_baseDirectory){
-        baseDirectory = ['..', projectName.toLowerCase()];
-    }else{
+    if(_baseDirectory === 'dest'){
         baseDirectory = [_baseDirectory, projectName.toLowerCase()];
+    }else{
+        baseDirectory = ['..', projectName.toLowerCase()];
     }
     return baseDirectory;
 }

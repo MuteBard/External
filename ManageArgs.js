@@ -1,34 +1,39 @@
-function getArgs(){
-    const args = {
-        name: {
-            command: process.argv.slice(2)[0],
-            data: process.argv.slice(2)[1]
-        },
-        options: {
-            command: process.argv.slice(2)[2],
-            data: process.argv.slice(2)[3]
+const _prompt = require('prompt-sync')();
+
+function prompt(message = "", postMessage = ""){
+    const value = _prompt(`${message}? ${postMessage ? '('+postMessage+')' : ''}: `)
+    console.clear();
+    return value;
+}
+
+function getParams(){
+    const args = {};
+    const name = prompt('Please provide the project name');
+    const action = prompt('Please provide the action', 'trim, pad, create');
+
+    if(!name){
+        throw "Invalid project provided";
+    }
+    else{
+        args.name = name;
+        switch(action) {
+            case 'pad':
+                args.action = action;
+                args.data = +prompt('Please indicate how many markup files are you adding');
+                break;
+            case 'trim':
+                args.action = action;
+                break;
+            case 'create':
+                args.action = action;
+                args.data = prompt('Please provide the output path', 'Enter if none')
+                break;
+            default:
+                throw "Invalid action provided"
+                break;
         }
     }
     return args;
-}
-
-
-function getParams(){
-    const args = getArgs();
-    if(args.name.command === '-name'){
-        const projectName = args.name.data;
-        if(args.options.command === '-dest'){
-            return { projectName, action: 'dest', data: args.options.data };
-        }else if(args.options.command === '-trim'){
-            return { projectName, action: 'trim' };
-        }else if(args.options.command === '-pad'){
-            return { projectName, action: 'pad', data: +args.options.data };     
-        }else{
-            return { projectName };
-        }
-    }else{
-        console.log("Valid Project Name not provided", args);
-    }
 }
 
 exports.getParams = getParams;

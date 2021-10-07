@@ -5,7 +5,7 @@ const path = require('path');
 ManageDirectories(params);
 
 async function ManageDirectories(params){
-    const baseDirectory = setBaseDirectory(params.baseDirectory, params.projectName);
+    const baseDirectory = setBaseDirectory(params.data, params.name);
     switch(params.action) {
         case 'trim':
             await DeleteUnusedMarkdowns(baseDirectory);
@@ -14,7 +14,7 @@ async function ManageDirectories(params){
             await WriteAdditionalMarkdowns(baseDirectory, params.data);
             break;
         default:
-            await CreateUnityProject(baseDirectory, params.projectName);
+            await CreateUnityProject(baseDirectory, params.name);
             break;
     }
 }

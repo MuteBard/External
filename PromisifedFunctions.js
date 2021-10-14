@@ -1,4 +1,5 @@
 const fs = require('fs-extra');
+const readline = require('readline');
 exports.mkdir = (name, options = { recursive: true }) => {
     return new Promise((resolve, reject) => {
         fs.mkdir(name, options, (err) => {
@@ -77,4 +78,17 @@ exports.listFiles = (name) => {
             }
         })
     }) 
+}
+
+exports.prompt = (message) => {
+    return new Promise((resolve, reject) => {
+        const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout
+        });
+        rl.question(message, (answer) => {
+            resolve(answer);
+            rl.close();
+        });
+    })
 }

@@ -1,10 +1,11 @@
 const { mkdir, move, writeFile, readFile, deleteFile, listFiles } = require('./PromisifedFunctions');
-const params = require('./ManageArgs').getParams();
+const args = require('./ManageArgs')
 const path = require('path');
 
-ManageDirectories(params);
+ManageDirectories();
 
-async function ManageDirectories(params){
+async function ManageDirectories(){
+    const params = await args.getParams();
     const baseDirectory = setBaseDirectory(params.data, params.name);
     switch(params.action) {
         case 'trim':
@@ -93,6 +94,7 @@ async function getFilesFromDir(base){
     const destination = path.join(...base);
     return listFiles(destination);
 }
+
 
 
 

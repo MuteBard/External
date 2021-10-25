@@ -2,25 +2,43 @@ const { mkdir, move, writeFile, readFile, deleteFile, listFiles } = require('./P
 const args = require('./ManageArgs')
 const path = require('path');
 
-ManageDirectories();
+const projectTypesEnum = args.projectTypes;
+const projectActionsEnum = args.projectActions;
 
-async function ManageDirectories(){
+manageDirectories();
+
+async function manageDirectories(){
     const params = await args.getParams();
-    const baseDirectory = setBaseDirectory(params.data, params.name);
+    const baseDirectory = setBaseDirectory(params.data, params.type, params.name);
     switch(params.action) {
-        case 'trim':
-            await DeleteUnusedMarkdowns(baseDirectory);
+        case projectActionsEnum.TRIM:
+            await deleteUnusedMarkdowns(baseDirectory);
             break;
-        case 'pad':
-            await WriteAdditionalMarkdowns(baseDirectory, params.data);
+        case projectActionsEnum.PAD:
+            await writeAdditionalMarkdowns(baseDirectory, params.data);
+            break;
+        case projectActionsEnum.CREATE:
+            await createProject(baseDirectory, params.type, params.name);
             break;
         default:
-            await CreateUnityProject(baseDirectory, params.name);
-            break;
+            throw 'Invalid project action provided';
     }
 }
 
-async function CreateUnityProject(baseDirectory, projectName){
+async function createProject(baseDirectory, projectType, projectName){
+    switch(projectType) {
+        case projectTypesEnum.UNITY:
+            await createUnityProject(baseDirectory, projectName);
+            break;
+        case projectTypesEnum.BLENDER:
+            await createBlenderProject(baseDirectory);
+            break;
+        default:
+            throw 'Invalid project type provided';
+    }
+}
+
+async function createUnityProject(baseDirectory, projectName){
     //folders
     await makeDirectory(baseDirectory, 'Exports');
     await makeDirectory(baseDirectory, 'Notes', ['dev']);
@@ -38,7 +56,21 @@ async function CreateUnityProject(baseDirectory, projectName){
     });
 }
 
-async function DeleteUnusedMarkdowns(baseDirectory){
+async function createBlenderProject(baseDirectory){
+    //folders
+    await makeDirectory(baseDirectory, 'Projects');
+    await makeDirectory(baseDirectory, 'Notes', ['dev']);
+    await makeDirectory(baseDirectory, 'Notes', ['images']);
+
+    [...Array(30).keys()].map(async (key) => {
+        const paddedNumber = (key+1).toString().padStart(2, '0');
+        const devText = `# DEV-${paddedNumber},\n#### Tags: []`;
+        const updatedBaseDirectory = baseDirectory.concat(['Notes', 'dev'])
+        await makeFile(updatedBaseDirectory, `DEV-${paddedNumber}.md`, devText);
+    });
+}
+
+async function deleteUnusedMarkdowns(baseDirectory){
     const updatedBaseDirectory = baseDirectory.concat(['Notes', 'dev'])
     const fileList = await getFilesFromDir(updatedBaseDirectory);
     fileList.map(async (fileName) => {
@@ -46,7 +78,7 @@ async function DeleteUnusedMarkdowns(baseDirectory){
     });
 }
 
-async function WriteAdditionalMarkdowns(baseDirectory, amount){
+async function writeAdditionalMarkdowns(baseDirectory, amount){
     const updatedBaseDirectory = baseDirectory.concat(['Notes', 'dev'])
     const fileList = await getFilesFromDir(updatedBaseDirectory);
     if(fileList){
@@ -60,12 +92,18 @@ async function WriteAdditionalMarkdowns(baseDirectory, amount){
     }
 }
 
-function setBaseDirectory(_baseDirectory, projectName){
+function setBaseDirectory(_baseDirectory, projectType, projectName){
     let baseDirectory;
-    if(_baseDirectory === 'dest'){
-        baseDirectory = [_baseDirectory, projectName.toLowerCase()];
-    }else{
-        baseDirectory = ['..', projectName.toLowerCase()];
+    
+    switch(projectType) {
+        case projectTypesEnum.UNITY:
+            baseDirectory = baseDirectory = ['..', 'unity', projectName.toLowerCase()];
+            break;
+        case projectTypesEnum.BLENDER:
+            baseDirectory = baseDirectory = ['..', 'blender', projectName.toLowerCase()];
+            break;
+        default:
+            throw 'Invalid project type provided';
     }
     return baseDirectory;
 }

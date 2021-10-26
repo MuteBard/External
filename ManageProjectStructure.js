@@ -59,6 +59,7 @@ async function createUnityProject(baseDirectory, projectName){
 async function createBlenderProject(baseDirectory){
     //folders
     await makeDirectory(baseDirectory, 'Projects');
+    await makeDirectory(baseDirectory, 'References');
     await makeDirectory(baseDirectory, 'Notes', ['dev']);
     await makeDirectory(baseDirectory, 'Notes', ['images']);
 

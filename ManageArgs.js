@@ -1,9 +1,41 @@
 const { prompt } = require('./PromisifedFunctions');
 
+const tuples = [
+    [
+        'unity', {
+            workspace: {
+                CREATE: 'create'
+            },
+            md: {
+                TRIM: 'trim',
+                PAD: 'pad'
+            },
+        }
+    ], [
+        'blender', {
+            workspace: {
+                CREATE: 'create'
+            },
+            md: {
+                TRIM: 'trim',
+                PAD: 'pad'
+            },
+            projects: {
+                PAD: 'pad',
+            }
+        }
+    ]
+]
 
 const projectTypes = {
-    UNITY : 'unity',
+    UNITY: 'unity',
     BLENDER: 'blender'
+};
+
+const projectPlans = {
+    WORKSPACE: 'workspace',
+    MD: 'md',
+    PROJECTS: 'projects'
 };
 
 const projectActions = {
@@ -12,34 +44,58 @@ const projectActions = {
     CREATE: 'create'
 };
 
-function format(list){
-    const newList = list.map((item, id) => {
-        if(id == 0){
-            return item;
-        }else{
-            return ' '+item;
-        }
-    });
-    return newList.toString().trim();
+const projectMap = new Map(tuples);
+
+function format(list) {
+    const newList = list.map((item) => `- ${item}`).toString().split(',').join('\n');
+    return newList;
 }
 
-async function getParams(){
+async function getParams() {
     const args = {};
-    const type = await prompt(`Please provide project type (${format(Object.values(projectTypes))}): `);
-    const name = await prompt('Please provide the project name: ');
-    const action = await prompt(`Please provide the action (${format(Object.values(projectActions))}): `);
-    
-    if(!name){
+
+    console.clear();
+    const type = await prompt(`Please provide project type: (Options below): \n${format([...projectMap.keys()])}\n\n`);
+
+    if (!projectMap.has(type)) {
+        throw "Invalid project type provided";
+    }
+
+    args.type = type;
+
+    console.clear();
+    const name = await prompt('Please provide the project name: \n');
+
+    if (!name) {
         throw "Invalid project name provided";
     }
-    
-    args.type = type;
+
     args.name = name;
-    let result;
-    switch(action) {
+
+    const plans = Object.keys(projectMap.get(type));
+
+    console.clear();
+    const plan = await prompt(`What do you plan to work with?: (Options below): \n${format(plans)}\n\n`);
+
+    if (!plans.includes(plan)) {
+        throw "Invalid plan provided";
+    }
+    args.plan = plan;
+
+    const actions = Object.values(projectMap.get(type)[plan])
+
+    console.clear();
+    const action = await prompt(`Please provide the action. (Options below): \n${format(actions)}\n\n`);
+
+    if (!actions.includes(action)) {
+        throw "Invalid action provided";
+    }
+
+    switch (action) {
         case 'pad':
             args.action = action;
-            result = await prompt('Please indicate how many markup files are you adding: ');
+            console.clear();
+            result = await prompt('Please indicate how many files are you adding: \n');
             args.data = +result;
             break;
         case 'trim':
@@ -51,10 +107,11 @@ async function getParams(){
         default:
             throw "Invalid action provided"
     }
-    
+
     return args;
 }
 
 exports.getParams = getParams;
 exports.projectTypes = projectTypes;
+exports.projectPlans = projectPlans;
 exports.projectActions = projectActions;

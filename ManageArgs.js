@@ -51,41 +51,42 @@ function format(list) {
     return newList;
 }
 
-async function question(statement){
+async function question(statement, name, collection = {type: ''}){
     console.clear();
-    return prompt(statement);
+    const value = await prompt(statement);
+
+    switch(collection.type){
+        case 'map':
+            if (!collection.value.has(value)) {
+                throw `Invalid project ${name} provided`;
+            }
+            break;
+        case 'list':
+            if (!collection.value.includes(value)) {
+                throw `Invalid project ${name} provided`;
+            }
+            break;
+        default:
+            if (!value) {
+                throw `Invalid project ${name} provided`;
+            }
+            break;
+    }
+    return value;
 }
 
 async function getParams() {
     const args = {};
-    const type = await question(`Please provide project type: (Options below): \n${format([...projectMap.keys()])}\n\n`);
+    const types = [...projectMap.keys()];
+    args.type = await question(`Please provide project type: (Options below): \n${format(types)}\n\n`, 'type', {value: projectMap, type: 'map'});
+   
+    args.name = await question('Please provide the project name: \n', 'name');
 
-    if (!projectMap.has(type)) {
-        throw "Invalid project type provided";
-    }
-    args.type = type;
+    const plans = Object.keys(projectMap.get(args.type));
+    args.plan = await question(`What do you plan to work with?: (Options below): \n${format(plans)}\n\n`, 'plan', {value: plans, type: 'list'});
 
-    const name = await question('Please provide the project name: \n');
-
-    if (!name) {
-        throw "Invalid project name provided";
-    }
-    args.name = name;
-
-    const plans = Object.keys(projectMap.get(type));
-    const plan = await question(`What do you plan to work with?: (Options below): \n${format(plans)}\n\n`);
-
-    if (!plans.includes(plan)) {
-        throw "Invalid plan provided";
-    }
-    args.plan = plan;
-
-    const actions = Object.values(projectMap.get(type)[plan]);
-    const action = await question(`Please provide the action. (Options below): \n${format(actions)}\n\n`);
-
-    if (!actions.includes(action)) {
-        throw "Invalid action provided";
-    }
+    const actions = Object.values(projectMap.get(args.type)[args.plan]);
+    const action = await question(`Please provide the action. (Options below): \n${format(actions)}\n\n`, 'action', {value: actions, type: 'list'});
 
     switch (action) {
         case 'pad':

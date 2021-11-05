@@ -41,6 +41,7 @@ async function createProject(baseDirectory, projectType, projectName) {
 
 async function createUnityProject(baseDirectory, projectName) {
     await makeDirectory(baseDirectory, 'Exports');
+    await makeDirectory(baseDirectory, 'Notes', ['dev']);
     await makeDirectory(baseDirectory, 'Notes', ['images']);
     await writeAdditionalMarkdowns(baseDirectory, 30);
     const gitignoreText = `.vscode\nMaterials\nPrefabs\nScenes\nSounds\nSprites\nTextMesh Pro\n*.meta\nLibrary\nLogs\nPackages\nProjectSettings\nTemp\nUserSettings\nAssembly-CSharp.*\n${projectName}.*`
@@ -48,7 +49,9 @@ async function createUnityProject(baseDirectory, projectName) {
 }
 
 async function createBlenderProject(baseDirectory) {
+    await makeDirectory(baseDirectory, 'Notes', ['dev']);
     await makeDirectory(baseDirectory, 'Notes', ['images']);
+    await makeDirectory(baseDirectory, 'Projects');
     await writeAdditionalMarkdowns(baseDirectory, 30);
     await writeAdditionalProjects(baseDirectory, 1);
 }
@@ -75,7 +78,7 @@ async function writeAdditionalManager(baseDirectory, plan, amount) {
 }
 
 async function writeAdditionalMarkdowns(baseDirectory, amount) {
-    const updatedBaseDirectory = baseDirectory.concat(['Notes', 'dev'])
+    const updatedBaseDirectory = baseDirectory.concat(['Notes', 'dev']);
     const fileList = await getFilesFromDir(updatedBaseDirectory);
     if (fileList) {
         const offset = fileList.length;
@@ -90,7 +93,7 @@ async function writeAdditionalMarkdowns(baseDirectory, amount) {
 
 async function writeAdditionalProjects(baseDirectory, amount) {
 
-    const updatedBaseDirectory = baseDirectory.concat(['Projects'])
+    const updatedBaseDirectory = baseDirectory.concat(['Projects']);
     const fileList = await getFilesFromDir(updatedBaseDirectory);
     if (fileList) {
         const offset = fileList.length;

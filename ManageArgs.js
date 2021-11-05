@@ -51,41 +51,37 @@ function format(list) {
     return newList;
 }
 
+async function question(statement){
+    console.clear();
+    return prompt(statement);
+}
+
 async function getParams() {
     const args = {};
-
-    console.clear();
-    const type = await prompt(`Please provide project type: (Options below): \n${format([...projectMap.keys()])}\n\n`);
+    const type = await question(`Please provide project type: (Options below): \n${format([...projectMap.keys()])}\n\n`);
 
     if (!projectMap.has(type)) {
         throw "Invalid project type provided";
     }
-
     args.type = type;
 
-    console.clear();
-    const name = await prompt('Please provide the project name: \n');
+    const name = await question('Please provide the project name: \n');
 
     if (!name) {
         throw "Invalid project name provided";
     }
-
     args.name = name;
 
     const plans = Object.keys(projectMap.get(type));
-
-    console.clear();
-    const plan = await prompt(`What do you plan to work with?: (Options below): \n${format(plans)}\n\n`);
+    const plan = await question(`What do you plan to work with?: (Options below): \n${format(plans)}\n\n`);
 
     if (!plans.includes(plan)) {
         throw "Invalid plan provided";
     }
     args.plan = plan;
 
-    const actions = Object.values(projectMap.get(type)[plan])
-
-    console.clear();
-    const action = await prompt(`Please provide the action. (Options below): \n${format(actions)}\n\n`);
+    const actions = Object.values(projectMap.get(type)[plan]);
+    const action = await question(`Please provide the action. (Options below): \n${format(actions)}\n\n`);
 
     if (!actions.includes(action)) {
         throw "Invalid action provided";

@@ -16,13 +16,26 @@ async function manageDirectories() {
             await deleteUnusedMarkdowns(baseDirectory);
             break;
         case projectActionsEnum.PAD:
-            await writeAdditionalManager(baseDirectory, params.plan, params.data);
+            await writeManager(baseDirectory, params.plan, params.data);
             break;
         case projectActionsEnum.CREATE:
             await createProject(baseDirectory, params.type, params.name);
             break;
         default:
             throw 'Invalid project action provided';
+    }
+}
+
+async function writeManager(baseDirectory, plan, amount) {
+    switch (plan) {
+        case projectPlansEnum.MD:
+            await writeAdditionalMarkdowns(baseDirectory, amount)
+            break;
+        case projectPlansEnum.PROJECTS:
+            await writeAdditionalProjects(baseDirectory, amount)
+            break;
+        default:
+            throw 'Invalid plan provided'
     }
 }
 
@@ -62,19 +75,6 @@ async function deleteUnusedMarkdowns(baseDirectory) {
     fileList.map(async (fileName) => {
         await removeFile(updatedBaseDirectory, fileName);
     });
-}
-
-async function writeAdditionalManager(baseDirectory, plan, amount) {
-    switch (plan) {
-        case projectPlansEnum.MD:
-            await writeAdditionalMarkdowns(baseDirectory, amount)
-            break;
-        case projectPlansEnum.PROJECTS:
-            await writeAdditionalProjects(baseDirectory, amount)
-            break;
-        default:
-            throw 'Invalid plan provided'
-    }
 }
 
 async function writeAdditionalMarkdowns(baseDirectory, amount) {

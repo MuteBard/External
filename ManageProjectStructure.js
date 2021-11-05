@@ -53,7 +53,7 @@ async function createBlenderProject(baseDirectory) {
     await makeDirectory(baseDirectory, 'Notes', ['images']);
     await makeDirectory(baseDirectory, 'Projects');
     await writeAdditionalMarkdowns(baseDirectory, 30);
-    await writeAdditionalProjects(baseDirectory, 1);
+    await writeAdditionalProjects(baseDirectory, 2);
 }
 
 async function deleteUnusedMarkdowns(baseDirectory) {
@@ -99,7 +99,7 @@ async function writeAdditionalProjects(baseDirectory, amount) {
         [...Array(amount).keys()].map(async (key) => {
             const updatedKey = offset + key;
             const paddedNumber = (updatedKey).toString().padStart(2, '0');
-            const name = offset == 0 ? 'PROJ-PLAYGROUND': `PROJ-${paddedNumber}`
+            const name = offset == 0 && key == 0? 'PROJ-PLAYGROUND': `PROJ-${paddedNumber}`
             await makeDirectory(updatedBaseDirectory, name, ['references']);
             await makeDirectory(updatedBaseDirectory, name, ['textures']);
             await makeDirectory(updatedBaseDirectory, name, ['pieces', 'blend']);

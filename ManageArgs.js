@@ -99,8 +99,6 @@ async function getParams() {
             args.data = +result;
             break;
         case 'trim':
-            args.action = action;
-            break;
         case 'create':
             args.action = action;
             break;

@@ -78,15 +78,21 @@ async function deleteUnusedMarkdowns(baseDirectory) {
 }
 
 async function writeAdditionalMarkdowns(baseDirectory, amount) {
-    const updatedBaseDirectory = baseDirectory.concat(['Notes', 'dev']);
-    const fileList = await getFilesFromDir(updatedBaseDirectory);
+    const devDirectory = baseDirectory.concat(['Notes', 'dev']);
+    const imageDirectory = baseDirectory.concat(['Notes', 'images']);
+    const fileList = await getFilesFromDir(devDirectory);
     if (fileList) {
         const offset = fileList.length;
         [...Array(amount).keys()].map(async (key) => {
+            //create mds
             const updatedKey = offset + key;
-            const paddedNumber = (updatedKey + 1).toString().padStart(2, '0');
-            const devText = `# DEV-${paddedNumber},\n#### Tags: []`;
-            await makeFile(updatedBaseDirectory, `DEV-${paddedNumber}.md`, devText);
+            const paddedNumber = (updatedKey + 1).toString().padStart(2, '0');            
+            const devText = `# DEV-${paddedNumber},\n#### Tags: []\n\n![](../images/DEV-${paddedNumber}/DEV-${paddedNumber}-A.png)`;
+            await makeFile(devDirectory, `DEV-${paddedNumber}.md`, devText);
+
+            //create image folders
+            const newImageDirectory = `DEV-${paddedNumber}`;
+            await makeDirectory(imageDirectory, newImageDirectory);
         });
     }
 }

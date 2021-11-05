@@ -92,18 +92,19 @@ async function writeAdditionalMarkdowns(baseDirectory, amount) {
 }
 
 async function writeAdditionalProjects(baseDirectory, amount) {
-
     const updatedBaseDirectory = baseDirectory.concat(['Projects']);
     const fileList = await getFilesFromDir(updatedBaseDirectory);
     if (fileList) {
         const offset = fileList.length;
         [...Array(amount).keys()].map(async (key) => {
             const updatedKey = offset + key;
-            const paddedNumber = (updatedKey + 1).toString().padStart(2, '0');
-            await makeDirectory(updatedBaseDirectory, `PROJ-${paddedNumber}`, ['references']);
-            await makeDirectory(updatedBaseDirectory, `PROJ-${paddedNumber}`, ['textures']);
-            await makeDirectory(updatedBaseDirectory, `PROJ-${paddedNumber}`, ['pieces']);
-            await makeDirectory(updatedBaseDirectory, `PROJ-${paddedNumber}`, ['whole']);
+            const paddedNumber = (updatedKey).toString().padStart(2, '0');
+            const name = offset == 0 ? 'PROJ-PLAYGROUND': `PROJ-${paddedNumber}`
+            await makeDirectory(updatedBaseDirectory, name, ['references']);
+            await makeDirectory(updatedBaseDirectory, name, ['textures']);
+            await makeDirectory(updatedBaseDirectory, name, ['pieces', 'blend']);
+            await makeDirectory(updatedBaseDirectory, name, ['pieces', 'exports']);
+            await makeDirectory(updatedBaseDirectory, name, ['whole']);
         });
     }
 }

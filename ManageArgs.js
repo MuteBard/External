@@ -10,6 +10,9 @@ const tuples = [
                 TRIM: 'trim',
                 PAD: 'pad'
             },
+            projects: {
+                PAD: 'pad',
+            }
         }
     ], [
         'blender', {

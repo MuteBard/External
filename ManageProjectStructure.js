@@ -6,6 +6,9 @@ const projectTypesEnum = args.projectTypes;
 const projectPlansEnum = args.projectPlans;
 const projectActionsEnum = args.projectActions;
 
+const DEFAULT_README_COUNT = 70;
+const DEFAULT_PROJECT_COUNT = 2;
+
 manageDirectories();
 
 async function manageDirectories() {
@@ -16,7 +19,7 @@ async function manageDirectories() {
             await deleteUnusedMarkdowns(baseDirectory);
             break;
         case projectActionsEnum.PAD:
-            await writeManager(baseDirectory, params.plan, params.data);
+            await writeManager(baseDirectory, params.type, params.plan, params.data);
             break;
         case projectActionsEnum.CREATE:
             await createProject(baseDirectory, params.type, params.name);
@@ -26,16 +29,24 @@ async function manageDirectories() {
     }
 }
 
-async function writeManager(baseDirectory, plan, amount) {
+async function writeManager(baseDirectory, projectType, plan, amount) {
     switch (plan) {
         case projectPlansEnum.MD:
             await writeAdditionalMarkdowns(baseDirectory, amount)
             break;
         case projectPlansEnum.PROJECTS:
-            await writeAdditionalProjects(baseDirectory, amount)
-            break;
+            switch(projectType){
+                case projectTypesEnum.UNITY:
+                    writeAdditionalUnityProjects(baseDirectory, amount);
+                    break;
+                case projectTypesEnum.BLENDER:
+                    writeAdditionalBlenderProjects(baseDirectory, amount);
+                    break;
+                default:
+                    throw 'Invalid project type provided';
+            }
         default:
-            throw 'Invalid plan provided'
+            throw 'Invalid plan provided';
     }
 }
 
@@ -56,7 +67,9 @@ async function createUnityProject(baseDirectory, projectName) {
     await makeDirectory(baseDirectory, 'Exports');
     await makeDirectory(baseDirectory, 'Notes', ['dev']);
     await makeDirectory(baseDirectory, 'Notes', ['images']);
-    await writeAdditionalMarkdowns(baseDirectory, 30);
+    await makeDirectory(baseDirectory, 'Projects');
+    await writeAdditionalMarkdowns(baseDirectory, DEFAULT_README_COUNT);
+    await writeAdditionalUnityProjects(baseDirectory, DEFAULT_PROJECT_COUNT);
     const gitignoreText = `.vscode\nMaterials\nPrefabs\nScenes\nSounds\nSprites\nTextMesh Pro\n*.meta\nLibrary\nLogs\nPackages\nProjectSettings\nTemp\nUserSettings\nAssembly-CSharp.*\n${projectName}.*`
     await makeFile(baseDirectory, '.gitignore', gitignoreText);
 }
@@ -65,8 +78,8 @@ async function createBlenderProject(baseDirectory) {
     await makeDirectory(baseDirectory, 'Notes', ['dev']);
     await makeDirectory(baseDirectory, 'Notes', ['images']);
     await makeDirectory(baseDirectory, 'Projects');
-    await writeAdditionalMarkdowns(baseDirectory, 30);
-    await writeAdditionalProjects(baseDirectory, 2);
+    await writeAdditionalMarkdowns(baseDirectory, DEFAULT_README_COUNT);
+    await writeAdditionalBlenderProjects(baseDirectory, DEFAULT_PROJECT_COUNT);
 }
 
 async function deleteUnusedMarkdowns(baseDirectory) {
@@ -97,7 +110,23 @@ async function writeAdditionalMarkdowns(baseDirectory, amount) {
     }
 }
 
-async function writeAdditionalProjects(baseDirectory, amount) {
+async function writeAdditionalUnityProjects(baseDirectory, amount) {
+    const exportsDirectory = baseDirectory.concat(['Exports']);
+    const projectsDirectory = baseDirectory.concat(['Projects']);
+    const fileList = await getFilesFromDir(projectsDirectory);
+    if (fileList) {
+        const offset = fileList.length;
+        [...Array(amount).keys()].map(async (key) => {
+            const updatedKey = offset + key;
+            const paddedNumber = (updatedKey).toString().padStart(2, '0');
+            const name = offset == 0 && key == 0? 'PROJ-PLAYGROUND': `PROJ-${paddedNumber}`
+            await makeDirectory(projectsDirectory, name);
+            await makeDirectory(exportsDirectory, name);
+        });
+    }
+}
+
+async function writeAdditionalBlenderProjects(baseDirectory, amount) {
     const updatedBaseDirectory = baseDirectory.concat(['Projects']);
     const fileList = await getFilesFromDir(updatedBaseDirectory);
     if (fileList) {

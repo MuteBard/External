@@ -12,6 +12,18 @@ exports.mkdir = (name, options = { recursive: true }) => {
     })
 }
 
+exports.rmdir = (name, options = { recursive: true }) => {
+    return new Promise((resolve, reject) => {
+        fs.rmdir(name, options, (err) => {
+            if(err) reject(err);
+            else {
+                console.log(`Deleted directory ${name}`);
+                resolve();
+            }
+        })
+    })
+}
+
 exports.move = (name, destination, options = { overwrite: false }) => {
     return new Promise((resolve, reject) => {
         fs.move(name, destination, options, (err) => {

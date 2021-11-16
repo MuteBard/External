@@ -35,6 +35,19 @@ exports.move = (name, destination, options = { overwrite: false }) => {
         })
     })
 }
+
+exports.rename = (oldName, newName) => {
+    return new Promise((resolve, reject) => {
+        fs.rename(oldName, newName, (err) => {
+            if(err) reject(err);
+            else{
+                console.log(`renamed ${oldName} to ${newName}`);
+                resolve();
+            } 
+        })
+    })
+}
+
 exports.writeFile = (name, content = '') => {
     return new Promise((resolve, reject) => {
         fs.writeFile(name, content, (err) => {
@@ -85,7 +98,6 @@ exports.listFiles = (name) => {
                 reject(err);
             } 
             else{
-                console.log(`Retrived file names from ${name}`);
                 resolve(data);
             }
         })

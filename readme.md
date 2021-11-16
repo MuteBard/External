@@ -18,3 +18,14 @@
     This is to save me from making errors and to save me time in creating and managing projects.
 
 ![](E-1.png)
+
+## How to use?
+
+    It can be used to deal with additional platforms but one step at a time.
+    Make sure the repo is cloned in the same base directory as unity and blender
+
+    add this alias to you bash profile, assuming that unity, blender and external are all sitting in a repo called dev:
+    alias app='cd ~/dev/external && npm run dev && cd -'
+    
+    In your terminal source the bash profile / bash rc file
+    cd ~ && source .bashrc && cd -

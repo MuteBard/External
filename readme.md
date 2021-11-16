@@ -24,8 +24,10 @@
     It can be used to deal with additional platforms but one step at a time.
     Make sure the repo is cloned in the same base directory as unity and blender
 
-    add this alias to you bash profile, assuming that unity, blender and external are all sitting in a repo called dev:
+    Add this alias to you bash profile, assuming that unity, blender and external are all sitting in a repo called dev:
     alias app='cd ~/dev/external && npm run dev && cd -'
     
     In your terminal source the bash profile / bash rc file
     cd ~ && source .bashrc && cd -
+
+    Then call "app" in your Terminal

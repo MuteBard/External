@@ -5,8 +5,6 @@ const args = require('./ManageArgs');
 const DEFAULT_README_COUNT = 70;
 const DEFAULT_PROJECT_COUNT = 2;
 
-manageDirectories();
-
 async function manageDirectories() {
     const params = await args.getParams();
     switch (params.action.id) {
@@ -166,3 +164,5 @@ async function writeAdditionalBlenderProjects(baseDirectory, amount) {
         });
     }
 }
+
+exports.manageDirectories = manageDirectories;

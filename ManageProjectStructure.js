@@ -1,7 +1,6 @@
-const { makeDirectory, makeFile, removeFile, renameFile, getFilesFromDirectory} = require('./FileActions');
-const args = require('./ManageArgs')
+const { makeDirectory, makeFile, removeFile, renameFile, getFilesFromDirectory } = require('./FileActions');
 const { platforms, tasks, actions } = require('./Enums');
-const path = require('path');
+const args = require('./ManageArgs');
 
 const DEFAULT_README_COUNT = 70;
 const DEFAULT_PROJECT_COUNT = 2;
@@ -10,11 +9,11 @@ manageDirectories();
 
 async function manageDirectories() {
     const params = await args.getParams();
-    switch (params.action) {
+    switch (params.action.id) {
         case actions.TRIM:
             await deleteUnusedMarkdowns(params);
             break;
-        case actions.PAD:
+        case actions.ADD:
             await writeManager(params);
             break;
         case actions.CREATE:
@@ -29,13 +28,13 @@ async function manageDirectories() {
 }
 
 async function writeManager(params) {
-    const {baseDirectory, platform, task, data} = params;
-    switch (task) {
-        case tasks.MD:
+    const { baseDirectory, platform, task, data } = params;
+    switch (task.id) {
+        case tasks.MARKDOWN:
             await writeAdditionalMarkdowns(baseDirectory, data[0])
             break;
         case tasks.PROJECTS:
-            switch(platform){
+            switch (platform) {
                 case platforms.UNITY:
                     writeAdditionalUnityProjects(baseDirectory, data[0]);
                     break;
@@ -46,14 +45,13 @@ async function writeManager(params) {
                     throw 'Invalid platform provided';
             }
         default:
-            throw 'Invalid plan provided';
+            throw 'Invalid task provided';
     }
 }
 
 
 async function createProject(params) {
-    const {baseDirectory, platform, epic} = params;
-    console.log(params)
+    const { baseDirectory, platform, epic } = params;
     switch (platform.id) {
         case platforms.UNITY:
             await createUnityProject(baseDirectory, epic);
@@ -98,17 +96,17 @@ async function deleteUnusedMarkdowns(baseDirectory) {
 async function failProj(params) {
     const { baseDirectory, data } = params;
     const reason = data[1];
-    const paddedNumber = (data[0]).toString().padStart(2, '0'); 
+    const paddedNumber = (data[0]).toString().padStart(2, '0');
     const fileName = `PROJ-${paddedNumber}`;
     const projDirectory = baseDirectory.concat(['Projects', fileName]);
-    
+
     const projectsDirectory = baseDirectory.concat(['Projects']);
     const fileList = await getFilesFromDirectory(projectsDirectory);
     if (!fileList.includes(fileName)) {
         throw `file ${fileName} doesn't exist`;
     }
     const failureReasonText = `# ${fileName}\n\n## Reason\n\n\t${reason}`;
-    await makeFile(projDirectory, `failure_reason.md`,  failureReasonText);
+    await makeFile(projDirectory, `failure_reason.md`, failureReasonText);
 
     const renamedProjDirectory = baseDirectory.concat(['Projects', `${fileName} (FAILED)`]);
     await renameFile(projDirectory, renamedProjDirectory)
@@ -123,7 +121,7 @@ async function writeAdditionalMarkdowns(baseDirectory, amount) {
         [...Array(amount).keys()].map(async (key) => {
             //create mds
             const updatedKey = offset + key;
-            const paddedNumber = (updatedKey + 1).toString().padStart(2, '0');            
+            const paddedNumber = (updatedKey + 1).toString().padStart(2, '0');
             const devText = `# DEV-${paddedNumber},\n#### Tags: []\n\n![](../images/DEV-${paddedNumber}/DEV-${paddedNumber}-A.png)`;
             await makeFile(devDirectory, `DEV-${paddedNumber}.md`, devText);
 
@@ -143,7 +141,7 @@ async function writeAdditionalUnityProjects(baseDirectory, amount) {
         [...Array(amount).keys()].map(async (key) => {
             const updatedKey = offset + key;
             const paddedNumber = (updatedKey).toString().padStart(2, '0');
-            const name = offset == 0 && key == 0? 'PROJ-PLAYGROUND': `PROJ-${paddedNumber}`
+            const name = offset == 0 && key == 0 ? 'PROJ-PLAYGROUND' : `PROJ-${paddedNumber}`
             await makeDirectory(projectsDirectory, name);
             await makeDirectory(exportsDirectory, name);
         });
@@ -158,7 +156,7 @@ async function writeAdditionalBlenderProjects(baseDirectory, amount) {
         [...Array(amount).keys()].map(async (key) => {
             const updatedKey = offset + key;
             const paddedNumber = (updatedKey).toString().padStart(2, '0');
-            const name = offset == 0 && key == 0? 'PROJ-PLAYGROUND': `PROJ-${paddedNumber}`
+            const name = offset == 0 && key == 0 ? 'PROJ-PLAYGROUND' : `PROJ-${paddedNumber}`
             await makeDirectory(updatedBaseDirectory, name, ['references']);
             await makeDirectory(updatedBaseDirectory, name, ['textures']);
             await makeDirectory(updatedBaseDirectory, name, ['pieces', 'blend']);

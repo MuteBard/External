@@ -23,7 +23,7 @@ async function getPlatform(question, structure) {
 
 async function getEpic(question) {
     let value;
-    let subValue
+    let subValue;
     let condition;
     let getIds = {};
     const keys = [];
@@ -42,16 +42,16 @@ async function getEpic(question) {
         if (!keys.includes(value)) {
             const subOptions = ["1 - yes", "2 - no"]
             subValue = + await stateQuestion('Are you creating a new directory?', subOptions);
-            if(subValue != 1){
+            if (subValue != 1) {
                 condition = true;
-                console.log(`\nTry again, pick a number from 1 to ${keys.length}\n\n`)  
+                console.log(`\nTry again, pick a number from 1 to ${keys.length}\n\n`)
             }
         }
     } while (condition);
 
-    if(!subValue){
+    if (!subValue) {
         params.baseDirectory = initialDirectory.concat(getIds[value]);
-    }else{
+    } else {
         params.baseDirectory = initialDirectory.concat(value);
     }
 
@@ -64,9 +64,9 @@ async function getTask(question, structure) {
 
 async function getAction(question, structure) {
     const value = await getGeneral(question, structure);
-    const action = structure[value.key].id
+    const action = value.id;
     switch (action) {
-        case actions.PAD:
+        case actions.ADD:
             params.data.push(+ await prompt('\nPlease indicate how many files are you adding: \n'));
             break;
         case actions.FAIL:
@@ -77,9 +77,9 @@ async function getAction(question, structure) {
         case actions.CREATE:
             break;
         default:
-            throw 'Invalid action provided qweerwrerwrwe'
+            throw 'Invalid action provided';
     }
-    return action;
+    return value;
 }
 
 async function getGeneral(question, structure) {

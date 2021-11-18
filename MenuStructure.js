@@ -1,58 +1,60 @@
+const { platforms, tasks, actions } = require('./Enums');
+
 exports.structure = {
-    1 : {
-        id: "unity",
-        1 : {
-            id: "workspace",
-            1 : {
-                id: 'create'
+    1: {
+        id: platforms.UNITY,
+        1: {
+            id: tasks.WORKSPACE,
+            1: {
+                id: actions.CREATE
             }
         },
-        2 : {
-            id: "markdown",
-            1 : {
-                id: 'pad'
+        2: {
+            id: tasks.MARKDOWN,
+            1: {
+                id: actions.ADD
             },
-            2 : {
-                id: 'trim'
+            2: {
+                id: actions.TRIM
             },
 
         },
-        3 : {
-            id: "projects",
-            1 : {
-                id: 'pad'
+        3: {
+            id: tasks.PROJECTS,
+            1: {
+                id: actions.ADD
             },
-            2 : {
-                id: 'fail'
+            2: {
+                id: actions.FAIL
             },
-        } 
+        }
     },
-    2 : {
-        id: "blender",
-        1 : {
-            id: "workspace",
-            1 : {
-                id: 'create'
+    2: {
+        id: platforms.BLENDER,
+        1: {
+            id: tasks.WORKSPACE,
+            1: {
+                id: actions.CREATE
             }
         },
-        2 : {
-            id: "markdown",
-            1 : {
-                id: 'pad'
+        2: {
+            id: tasks.MARKDOWN,
+            1: {
+                id: actions.ADD
             },
-            2 : {
-                id: 'trim'
+            2: {
+                id: actions.TRIM
             },
 
         },
-        3 : {
-            id: "projects",
-            1 : {
-                id: 'pad'
+        3: {
+            id: tasks.PROJECTS,
+            1: {
+                id: actions.ADD
             },
-            2 : {
-                id: 'fail'
+            2: {
+                id: actions.FAIL
             },
-        } 
+        }
     }
 }

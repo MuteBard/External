@@ -5,12 +5,12 @@ exports.platforms = {
 
 exports.tasks = {
     WORKSPACE: 'workspace',
-    MD: 'md',
+    MARKDOWN: 'markdown',
     PROJECTS: 'projects'
 };
 exports.actions = {
     TRIM: 'trim',
-    PAD: 'pad',
+    ADD: 'add',
     CREATE: 'create',
     FAIL: 'fail'
 };

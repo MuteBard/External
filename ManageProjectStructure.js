@@ -23,7 +23,7 @@ async function manageDirectories() {
             await failProj(params);
             break;
         default:
-            throw 'Invalid action provided';
+            throw `[manageDirectories]: Invalid action provided: ${params.action.id}`;
     }
 }
 
@@ -34,7 +34,7 @@ async function writeManager(params) {
             await writeAdditionalMarkdowns(baseDirectory, data[0])
             break;
         case tasks.PROJECTS:
-            switch (platform) {
+            switch (platform.id) {
                 case platforms.UNITY:
                     writeAdditionalUnityProjects(baseDirectory, data[0]);
                     break;
@@ -42,10 +42,11 @@ async function writeManager(params) {
                     writeAdditionalBlenderProjects(baseDirectory, data[0]);
                     break;
                 default:
-                    throw 'Invalid platform provided';
+                    throw `[writeManager]: Invalid platform provided: ${platform.id}`;
             }
+            break;
         default:
-            throw 'Invalid task provided';
+            throw `[writeManager]: Invalid task provided: ${task.id}`;
     }
 }
 
@@ -60,7 +61,7 @@ async function createProject(params) {
             await createBlenderProject(baseDirectory);
             break;
         default:
-            throw 'Invalid platform provided';
+            throw `[createProject]: Invalid platform provided: ${platform.id}`;
     }
 }
 

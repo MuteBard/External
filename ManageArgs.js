@@ -38,6 +38,8 @@ async function getEpic(question) {
     });
     do {
         condition = false;
+
+        console.log('\x1b[36m%s\x1b[0m','\nIf you are adding a new directory, please type it now');
         value = await stateQuestion(question, options);
         if (!keys.includes(value)) {
             const subOptions = ["1 - yes", "2 - no"]

@@ -39,6 +39,9 @@ async function writeManager(params) {
                 case platforms.BLENDER:
                     writeAdditionalBlenderProjects(baseDirectory, data[0]);
                     break;
+                case platforms.PHOTOSHOP:
+                    writeAdditionalPhotoshopProjects(baseDirectory, data[0]);
+                    break;
                 default:
                     throw `[writeManager]: Invalid platform provided: ${platform.id}`;
             }
@@ -57,6 +60,9 @@ async function createProject(params) {
             break;
         case platforms.BLENDER:
             await createBlenderProject(baseDirectory);
+            break;
+        case platforms.PHOTOSHOP:
+            await createPhotoshopProject(baseDirectory);
             break;
         default:
             throw `[createProject]: Invalid platform provided: ${platform.id}`;
@@ -77,11 +83,20 @@ async function createUnityProject(baseDirectory, projectName) {
 }
 
 async function createBlenderProject(baseDirectory) {
+    await createBasicProject(baseDirectory);
+}
+
+async function createPhotoshopProject(baseDirectory) {
+    await createBasicProject(baseDirectory);
+}
+
+async function createBasicProject(baseDirectory) {
+    await makeDirectory(baseDirectory, 'Exports');
     await makeDirectory(baseDirectory, 'Notes', ['dev']);
     await makeDirectory(baseDirectory, 'Notes', ['images']);
     await makeDirectory(baseDirectory, 'Projects');
     await writeAdditionalMarkdowns(baseDirectory, DEFAULT_README_COUNT);
-    await writeAdditionalBlenderProjects(baseDirectory, DEFAULT_PROJECT_COUNT);
+    await writeAdditionalUnityProjects(baseDirectory, DEFAULT_PROJECT_COUNT);
 }
 
 async function deleteUnusedMarkdowns(baseDirectory) {
@@ -132,19 +147,7 @@ async function writeAdditionalMarkdowns(baseDirectory, amount) {
 }
 
 async function writeAdditionalUnityProjects(baseDirectory, amount) {
-    const exportsDirectory = baseDirectory.concat(['Exports']);
-    const projectsDirectory = baseDirectory.concat(['Projects']);
-    const fileList = await getFilesFromDirectory(projectsDirectory);
-    if (fileList) {
-        const offset = fileList.length;
-        [...Array(amount).keys()].map(async (key) => {
-            const updatedKey = offset + key;
-            const paddedNumber = (updatedKey).toString().padStart(2, '0');
-            const name = offset == 0 && key == 0 ? 'PROJ-PLAYGROUND' : `PROJ-${paddedNumber}`
-            await makeDirectory(projectsDirectory, name);
-            await makeDirectory(exportsDirectory, name);
-        });
-    }
+    await writeAdditionalBasicProjects(baseDirectory, amount)
 }
 
 async function writeAdditionalBlenderProjects(baseDirectory, amount) {
@@ -161,6 +164,26 @@ async function writeAdditionalBlenderProjects(baseDirectory, amount) {
             await makeDirectory(updatedBaseDirectory, name, ['pieces', 'blend']);
             await makeDirectory(updatedBaseDirectory, name, ['pieces', 'exports']);
             await makeDirectory(updatedBaseDirectory, name, ['whole']);
+        });
+    }
+}
+
+async function writeAdditionalPhotoshopProjects(baseDirectory, amount) {
+    await writeAdditionalBasicProjects(baseDirectory, amount)
+}
+
+async function writeAdditionalBasicProjects(baseDirectory, amount) {
+    const exportsDirectory = baseDirectory.concat(['Exports']);
+    const projectsDirectory = baseDirectory.concat(['Projects']);
+    const fileList = await getFilesFromDirectory(projectsDirectory);
+    if (fileList) {
+        const offset = fileList.length;
+        [...Array(amount).keys()].map(async (key) => {
+            const updatedKey = offset + key;
+            const paddedNumber = (updatedKey).toString().padStart(2, '0');
+            const name = offset == 0 && key == 0 ? 'PROJ-PLAYGROUND' : `PROJ-${paddedNumber}`
+            await makeDirectory(projectsDirectory, name);
+            await makeDirectory(exportsDirectory, name);
         });
     }
 }

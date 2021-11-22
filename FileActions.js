@@ -7,13 +7,16 @@ function setBaseDirectory(platformName) {
 
     switch (platformName) {
         case platforms.UNITY:
-            baseDirectory = ['..', 'unity'];
+            baseDirectory = ['..', platforms.UNITY];
             break;
         case platforms.BLENDER:
-            baseDirectory = ['..', 'blender'];
+            baseDirectory = ['..', platforms.BLENDER];
+            break;
+        case platforms.PHOTOSHOP:
+            baseDirectory = ['..', platforms.PHOTOSHOP];
             break;
         default:
-            throw 'error';
+            throw `[setBaseDirectory]: Invalid platform provided: ${platform.id}`;;
     }
     return baseDirectory;
 }

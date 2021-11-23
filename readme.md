@@ -6,6 +6,7 @@
 
     unity
     blender
+    photoshop
 
     Having well managed notes is important form me so succeed in my journey to become a well rounded game developer
 

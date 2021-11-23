@@ -9,7 +9,7 @@ async function manageDirectories() {
     const params = await args.getParams();
     switch (params.action.id) {
         case actions.TRIM:
-            await deleteUnusedMarkdowns(params);
+            await deleteUnusedMarkdowns(params.baseDirectory);
             break;
         case actions.ADD:
             await writeManager(params);

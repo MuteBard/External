@@ -15,6 +15,9 @@ function setBaseDirectory(platformName) {
         case platforms.PHOTOSHOP:
             baseDirectory = ['..', platforms.PHOTOSHOP];
             break;
+        case platforms.MATH:
+            baseDirectory = ['..', platforms.MATH];
+            break;
         default:
             throw `[setBaseDirectory]: Invalid platform provided: ${platform.id}`;;
     }

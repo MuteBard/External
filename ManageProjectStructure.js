@@ -15,7 +15,7 @@ async function manageDirectories() {
             await writeManager(params);
             break;
         case actions.CREATE:
-            await createProject(params);
+            await createPlatform(params);
             break;
         case actions.FAIL:
             await failProj(params);
@@ -51,52 +51,41 @@ async function writeManager(params) {
     }
 }
 
-
-async function createProject(params) {
+async function createPlatform(params) {
     const { baseDirectory, platform, epic } = params;
     switch (platform.id) {
         case platforms.UNITY:
-            await createUnityProject(baseDirectory, epic);
-            break;
         case platforms.BLENDER:
-            await createBlenderProject(baseDirectory);
-            break;
         case platforms.PHOTOSHOP:
-            await createPhotoshopProject(baseDirectory);
+        case platforms.MATH:
+            await createGeneralPlatform(baseDirectory, platform.id, epic);
             break;
         default:
             throw `[createProject]: Invalid platform provided: ${platform.id}`;
     }
 }
 
-async function createUnityProject(baseDirectory, projectName) {
+async function createGeneralPlatform(baseDirectory, platform, epic) {
     await makeDirectory(baseDirectory, 'Exports');
     await makeDirectory(baseDirectory, 'Notes', ['dev']);
     await makeDirectory(baseDirectory, 'Notes', ['images']);
-    await makeDirectory(baseDirectory, 'Projects');
     await writeAdditionalMarkdowns(baseDirectory, DEFAULT_README_COUNT);
-    await writeAdditionalUnityProjects(baseDirectory, DEFAULT_PROJECT_COUNT);
-    const gitignoreText1 = `.vscode\nMaterials\nPrefabs\nScenes\nSounds\nSprites\nTextMesh Pro\n*.meta\nLibrary\nLogs\nPackages\nProjectSettings\nTemp\nUserSettings\nAssembly-CSharp.*\n${projectName}.*`
-    const gitignoreText2 = `node_modules`;
-    await makeFile(baseDirectory, '.gitignore', gitignoreText1);
-    await makeFile([], '.gitignore', gitignoreText2);
-}
 
-async function createBlenderProject(baseDirectory) {
-    await createBasicProject(baseDirectory);
-}
-
-async function createPhotoshopProject(baseDirectory) {
-    await createBasicProject(baseDirectory);
-}
-
-async function createBasicProject(baseDirectory) {
-    await makeDirectory(baseDirectory, 'Exports');
-    await makeDirectory(baseDirectory, 'Notes', ['dev']);
-    await makeDirectory(baseDirectory, 'Notes', ['images']);
-    await makeDirectory(baseDirectory, 'Projects');
-    await writeAdditionalMarkdowns(baseDirectory, DEFAULT_README_COUNT);
-    await writeAdditionalUnityProjects(baseDirectory, DEFAULT_PROJECT_COUNT);
+    switch (platform.id) {
+        case platforms.UNITY:
+            const gitignoreText1 = `.vscode\nMaterials\nPrefabs\nScenes\nSounds\nSprites\nTextMesh Pro\n*.meta\nLibrary\nLogs\nPackages\nProjectSettings\nTemp\nUserSettings\nAssembly-CSharp.*\n${epic}.*`
+            const gitignoreText2 = `node_modules`;
+            await makeFile(baseDirectory, '.gitignore', gitignoreText1);
+            await makeFile([], '.gitignore', gitignoreText2);
+            //continue
+        case platforms.BLENDER:
+        case platforms.PHOTOSHOP:
+            await makeDirectory(baseDirectory, 'Projects');
+            await writeAdditionalUnityProjects(baseDirectory, DEFAULT_PROJECT_COUNT);
+            break;
+        default:
+            break;
+    }
 }
 
 async function deleteUnusedMarkdowns(baseDirectory) {

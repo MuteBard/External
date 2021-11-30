@@ -86,4 +86,23 @@ exports.structure = {
             },
         }
     },
+    4: {
+        id: platforms.MATH,
+        1: {
+            id: tasks.WORKSPACE,
+            1: {
+                id: actions.CREATE
+            }
+        },
+        2: {
+            id: tasks.MARKDOWN,
+            1: {
+                id: actions.ADD
+            },
+            2: {
+                id: actions.TRIM
+            },
+
+        }
+    },
 }

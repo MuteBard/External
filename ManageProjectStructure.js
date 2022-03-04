@@ -141,10 +141,10 @@ async function writeAdditionalMarkdowns(baseDirectory, amount) {
 }
 
 function createImageLinksString(amount, paddedNumber) {
-    let idx = 0;
+    let idx = 1;
     let str = '';
-    while(idx < amount){
-      str += `![](../images/DEV-${paddedNumber}/DEV-${paddedNumber}-A${amount}.png)\n\n`
+    while(idx <= amount){
+      str += `![](../images/DEV-${paddedNumber}/DEV-${paddedNumber}-A${idx}.png)\n\n`
       idx += 1;
     }
     return str;

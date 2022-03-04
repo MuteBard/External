@@ -70,22 +70,23 @@ async function createGeneralPlatform(baseDirectory, platform, epic) {
     await makeDirectory(baseDirectory, 'Notes', ['dev']);
     await makeDirectory(baseDirectory, 'Notes', ['images']);
     await writeAdditionalMarkdowns(baseDirectory, DEFAULT_README_COUNT);
-
+    let gitignoreText;
     switch (platform) {
         case platforms.UNITY:
-            console.log("test1")
-            const gitignoreText1 = `.vscode\nMaterials\nPrefabs\nScenes\nSounds\nSprites\nTextMesh Pro\n*.meta\nLibrary\nLogs\nPackages\nProjectSettings\nTemp\nUserSettings\nAssembly-CSharp.*\n${epic}.*`
-            // const gitignoreText2 = `node_modules`;
-            await makeFile(baseDirectory, '.gitignore', gitignoreText1);
-            // await makeFile([], '.gitignore', gitignoreText2);
+            gitignoreText = `.vscode\nMaterials\nPrefabs\nScenes\nSounds\nSprites\nTextMesh Pro\n*.meta\nLibrary\nLogs\nPackages\nProjectSettings\nTemp\nUserSettings\nAssembly-CSharp.*\n${epic}.*`
+            await makeFile(baseDirectory, '.gitignore', gitignoreText);
             await makeDirectory(baseDirectory, 'Projects');
             await writeAdditionalUnityProjects(baseDirectory, DEFAULT_PROJECT_COUNT);
             break;
         case platforms.BLENDER:
-        case platforms.PHOTOSHOP:
-            console.log("test2")
+            gitignoreText = `*.blend\n*.blend1`
+            await makeFile(baseDirectory, '.gitignore', gitignoreText);
             await makeDirectory(baseDirectory, 'Projects');
-            await writeAdditionalUnityProjects(baseDirectory, DEFAULT_PROJECT_COUNT);
+            await writeAdditionalBlenderProjects(baseDirectory, DEFAULT_PROJECT_COUNT);
+            break;
+        case platforms.PHOTOSHOP:
+            await makeDirectory(baseDirectory, 'Projects');
+            await writeAdditionalPhotoshopProjects(baseDirectory, DEFAULT_PROJECT_COUNT);
             break;
         default:
             break;
@@ -129,7 +130,7 @@ async function writeAdditionalMarkdowns(baseDirectory, amount) {
             //create mds
             const updatedKey = offset + key;
             const paddedNumber = (updatedKey + 1).toString().padStart(2, '0');
-            const devText = `# DEV-${paddedNumber},\n### Tags: []\n### Link:\n\n![](../images/DEV-${paddedNumber}/DEV-${paddedNumber}-A1.png)`;
+            const devText = `# DEV-${paddedNumber},\n### Tags: []\n### Link:[<>]\n\n${createImageLinksString(10, paddedNumber)}`;
             await makeFile(devDirectory, `DEV-${paddedNumber}.md`, devText);
 
             //create image folders
@@ -137,6 +138,16 @@ async function writeAdditionalMarkdowns(baseDirectory, amount) {
             await makeDirectory(imageDirectory, newImageDirectory);
         });
     }
+}
+
+function createImageLinksString(amount, paddedNumber) {
+    let idx = 0;
+    let str = '';
+    while(idx < amount){
+      str += `![](../images/DEV-${paddedNumber}/DEV-${paddedNumber}-A${amount}.png)\n\n`
+      idx += 1;
+    }
+    return str;
 }
 
 async function writeAdditionalUnityProjects(baseDirectory, amount) {

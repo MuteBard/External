@@ -79,7 +79,7 @@ async function createGeneralPlatform(baseDirectory, platform, epic) {
             await writeAdditionalUnityProjects(baseDirectory, DEFAULT_PROJECT_COUNT);
             break;
         case platforms.BLENDER:
-            gitignoreText = `*.blend\n*.blend1`
+            gitignoreText = `*.blend\n*.blend1\n*.blend2\n*.blend3`
             await makeFile(baseDirectory, '.gitignore', gitignoreText);
             await makeDirectory(baseDirectory, 'Projects');
             await writeAdditionalBlenderProjects(baseDirectory, DEFAULT_PROJECT_COUNT);
@@ -143,9 +143,12 @@ async function writeAdditionalMarkdowns(baseDirectory, amount) {
 function createImageLinksString(amount, paddedNumber) {
     let idx = 1;
     let str = '';
-    while(idx <= amount){
-      str += `![](../images/DEV-${paddedNumber}/DEV-${paddedNumber}-A${idx}.png)\n\n`
-      idx += 1;
+    letterList = ['A', 'B', 'C', 'D', 'E'];
+    for (let letterIdx = 0; letterIdx < letterList.length; letterIdx++){
+      `## Topic ${letterList[letterIdx]}\n`
+      for(let idx = 1; idx <= amount; idx++){
+        str += `![](../images/DEV-${paddedNumber}/DEV-${paddedNumber}-${letterList[letterIdx]}${idx}.png)\n\n`
+      }
     }
     return str;
 }

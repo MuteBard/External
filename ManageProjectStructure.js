@@ -130,7 +130,7 @@ async function writeAdditionalMarkdowns(baseDirectory, amount) {
             //create mds
             const updatedKey = offset + key;
             const paddedNumber = (updatedKey + 1).toString().padStart(2, '0');
-            const devText = `# DEV-${paddedNumber},\n### Tags: []\n### Link:[<>]\n\n${createImageLinksString(10, paddedNumber)}`;
+            const devText = `# DEV-${paddedNumber},\n### Tags: []\n### Link:[<>]\n\n${createImageLinksString(12, paddedNumber)}`;
             await makeFile(devDirectory, `DEV-${paddedNumber}.md`, devText);
 
             //create image folders
@@ -145,7 +145,7 @@ function createImageLinksString(amount, paddedNumber) {
     let str = '';
     letterList = ['A', 'B', 'C', 'D', 'E'];
     for (let letterIdx = 0; letterIdx < letterList.length; letterIdx++){
-      `## Topic ${letterList[letterIdx]}\n`
+      str += `## Topic ${letterList[letterIdx]}\n`
       for(let idx = 1; idx <= amount; idx++){
         str += `![](../images/DEV-${paddedNumber}/DEV-${paddedNumber}-${letterList[letterIdx]}${idx}.png)\n\n`
       }

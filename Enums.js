@@ -2,7 +2,8 @@ exports.platforms = {
     UNITY: 'unity',
     BLENDER: 'blender',
     PHOTOSHOP: 'photoshop',
-    MATH: 'math'
+    MATH: 'math',
+    SUBSTANCE_PAINTER: 'substance_painter'
 };
 
 exports.tasks = {

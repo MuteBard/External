@@ -101,8 +101,32 @@ exports.structure = {
             },
             2: {
                 id: actions.TRIM
-            },
-
+            }
         }
     },
+    5: {
+        id: platforms.SUBSTANCE_PAINTER,
+        1: {
+            id: tasks.WORKSPACE,
+            1: {
+                id: actions.CREATE
+            }
+        },
+        2: {
+            id: tasks.MARKDOWN,
+            1: {
+                id: actions.ADD
+            },
+            2: {
+                id: actions.TRIM
+            },
+
+        },
+        3: {
+            id: tasks.PROJECTS,
+            1: {
+                id: actions.ADD
+            }
+        }
+    }
 }

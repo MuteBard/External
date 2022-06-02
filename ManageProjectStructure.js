@@ -39,6 +39,7 @@ async function writeManager(params) {
                 case platforms.BLENDER:
                     writeAdditionalBlenderProjects(baseDirectory, data[0]);
                     break;
+                case platforms.SUBSTANCE_PAINTER:
                 case platforms.PHOTOSHOP:
                     writeAdditionalPhotoshopProjects(baseDirectory, data[0]);
                     break;
@@ -58,6 +59,7 @@ async function createPlatform(params) {
         case platforms.BLENDER:
         case platforms.PHOTOSHOP:
         case platforms.MATH:
+        case platforms.SUBSTANCE_PAINTER:
             await createGeneralPlatform(baseDirectory, platform.id, epic);
             break;
         default:
@@ -87,6 +89,10 @@ async function createGeneralPlatform(baseDirectory, platform, epic) {
         case platforms.PHOTOSHOP:
             await makeDirectory(baseDirectory, 'Projects');
             await writeAdditionalPhotoshopProjects(baseDirectory, DEFAULT_PROJECT_COUNT);
+            break;
+        case platforms.SUBSTANCE_PAINTER:
+            await makeDirectory(baseDirectory, 'Projects');
+            await writeAdditionalSubstancePainterProjects(baseDirectory, DEFAULT_PROJECT_COUNT);
             break;
         default:
             break;
@@ -176,6 +182,11 @@ async function writeAdditionalBlenderProjects(baseDirectory, amount) {
 }
 
 async function writeAdditionalPhotoshopProjects(baseDirectory, amount) {
+    await writeAdditionalBasicProjects(baseDirectory, amount)
+}
+
+
+async function writeAdditionalSubstancePainterProjects(baseDirectory, amount) {
     await writeAdditionalBasicProjects(baseDirectory, amount)
 }
 

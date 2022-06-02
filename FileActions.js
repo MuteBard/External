@@ -18,6 +18,9 @@ function setBaseDirectory(platformName) {
         case platforms.MATH:
             baseDirectory = ['..', platforms.MATH];
             break;
+        case platforms.SUBSTANCE_PAINTER:
+            baseDirectory = ['..', platforms.SUBSTANCE_PAINTER];
+            break;
         default:
             throw `[setBaseDirectory]: Invalid platform provided: ${platform.id}`;;
     }
